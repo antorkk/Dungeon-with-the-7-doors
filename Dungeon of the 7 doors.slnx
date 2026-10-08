@@ -1,7 +1,152 @@
-<Solution>
-  <Configurations>
-    <Platform Name="x64" />
-    <Platform Name="x86" />
-  </Configurations>
-  <Project Path="Dungeon of the 7 doors/Dungeon of the 7 doors.vcxproj" />
-</Solution>
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+int main() {
+    srand(static_cast<unsigned>(time(nullptr)));
+
+    int hp = 30;
+    int gold = 0;
+    int potions = 2;
+    int room = 1;
+
+    cout << "====================================\n";
+    cout << "      DUNGEON OF THE 7 DOORS\n";
+    cout << "====================================\n";
+    cout << "You wake up in a dark dungeon...\n";
+    cout << "Find the exit. Survive the monsters.\n\n";
+
+    while (hp > 0 && room <= 7) {
+        cout << "\n------------------------------------\n";
+        cout << "Room " << room << "   HP: " << hp
+             << "   Gold: " << gold
+             << "   Potions: " << potions << "\n";
+        cout << "------------------------------------\n";
+
+        int event = rand() % 5;
+
+        if (event == 0) {
+            // Monster
+            string monsters[] = {"Goblin", "Skeleton", "Dark Knight", "Vampire"};
+            string monster = monsters[rand() % 4];
+
+            int enemyHP = 8 + rand() % 13;
+
+            cout << "\nA " << monster << " jumps out!\n";
+
+            while (enemyHP > 0 && hp > 0) {
+                cout << "\nEnemy HP: " << enemyHP << "\n";
+                cout << "1. Attack\n";
+                cout << "2. Drink potion\n";
+                cout << "3. Run\n";
+                cout << "> ";
+
+                int choice;
+                cin >> choice;
+
+                if (choice == 1) {
+                    int damage = 3 + rand() % 8;
+                    enemyHP -= damage;
+                    cout << "You deal " << damage << " damage!\n";
+
+                    if (enemyHP > 0) {
+                        int enemyDamage = 2 + rand() % 6;
+                        hp -= enemyDamage;
+                        cout << monster << " hits you for "
+                             << enemyDamage << " damage!\n";
+                    }
+                }
+                else if (choice == 2) {
+                    if (potions > 0) {
+                        potions--;
+                        int heal = 8 + rand() % 8;
+                        hp = min(30, hp + heal);
+                        cout << "You recover " << heal << " HP!\n";
+                    } else {
+                        cout << "You have no potions!\n";
+                    }
+                }
+                else if (choice == 3) {
+                    cout << "You run away!\n";
+                    break;
+                }
+                else {
+                    cout << "Invalid choice.\n";
+                }
+            }
+
+            if (enemyHP <= 0) {
+                int reward = 5 + rand() % 16;
+                gold += reward;
+                cout << "\nYou defeated the " << monster << "!\n";
+                cout << "You found " << reward << " gold.\n";
+            }
+
+        } else if (event == 1) {
+            // Treasure
+            int treasure = 10 + rand() % 31;
+            gold += treasure;
+
+            cout << "\n✨ You discovered a treasure chest!\n";
+            cout << "Inside: " << treasure << " gold!\n";
+
+        } else if (event == 2) {
+            // Trap
+            int damage = 3 + rand() % 10;
+            hp -= damage;
+
+            cout << "\n💀 A hidden trap activates!\n";
+            cout << "You lose " << damage << " HP.\n";
+
+        } else if (event == 3) {
+            // Potion
+            potions++;
+            cout << "\n🧪 You found a healing potion!\n";
+
+        } else {
+            // Strange room
+            cout << "\nYou enter a mysterious room...\n";
+
+            int mystery = rand() % 3;
+
+            if (mystery == 0) {
+                hp = min(30, hp + 5);
+                cout << "A magical fountain restores 5 HP.\n";
+            } else if (mystery == 1) {
+                gold += 20;
+                cout << "A ghost gives you 20 gold.\n";
+            } else {
+                cout << "Nothing happens...\n";
+                cout << "But you feel like something is watching you.\n";
+            }
+        }
+
+        room++;
+    }
+
+    cout << "\n====================================\n";
+
+    if (hp <= 0) {
+        cout << "💀 YOU DIED\n";
+        cout << "The dungeon claims another adventurer.\n";
+    } else {
+        cout << "🏆 YOU ESCAPED!\n";
+        cout << "You survived the dungeon with " << hp << " HP.\n";
+        cout << "Gold collected: " << gold << "\n";
+
+        if (gold >= 80)
+            cout << "👑 LEGENDARY TREASURE HUNTER!\n";
+        else if (gold >= 40)
+            cout << "⚔️  Brave adventurer!\n";
+        else
+            cout << "😅 You escaped... barely.\n";
+    }
+
+    cout << "====================================\n";
+
+    return 0;
+}
